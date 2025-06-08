@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@fastify/cors": "^11.0.1",
+    "@fastify/static": "^8.2.0",
     "@octokit/rest": "^20.0.2",
     "better-sqlite3": "^11.9.1",
     "csv-writer": "^1.6.0",

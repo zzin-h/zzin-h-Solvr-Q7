@@ -6,6 +6,11 @@ import runMigration from './db/migrate'
 import { createUserService } from './services/userService'
 import { createRoutes } from './routes'
 import { AppContext } from './types/context'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // Fastify 인스턴스 생성
 const fastify = Fastify({
@@ -29,6 +34,12 @@ async function start() {
       origin: env.CORS_ORIGIN,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       credentials: true
+    })
+
+    // Static file serving
+    await fastify.register(import('@fastify/static'), {
+      root: path.join(__dirname, '..'),
+      prefix: '/server/'
     })
 
     // 데이터베이스 마이그레이션 및 초기화
