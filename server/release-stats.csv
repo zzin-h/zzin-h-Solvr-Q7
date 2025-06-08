@@ -1,7 +1,7 @@
 Repository,Metric,Period,Count
-stackflow,Total,All time,159
-stackflow,Yearly,2023,17
-stackflow,Yearly,2024,122
+stackflow,Total,All time,157
+stackflow,Yearly,2023,16
+stackflow,Yearly,2024,121
 stackflow,Yearly,2025,20
 stackflow,Monthly,2025-05,5
 stackflow,Monthly,2025-04,2
@@ -16,8 +16,8 @@ stackflow,Monthly,2024-08,23
 stackflow,Monthly,2024-07,44
 stackflow,Monthly,2024-05,4
 stackflow,Monthly,2024-02,10
-stackflow,Monthly,2024-01,18
-stackflow,Monthly,2023-12,17
+stackflow,Monthly,2024-01,17
+stackflow,Monthly,2023-12,16
 stackflow,Weekly,2025-W22,2
 stackflow,Weekly,2025-W20,3
 stackflow,Weekly,2025-W15,2
@@ -44,14 +44,14 @@ stackflow,Weekly,2024-W21,3
 stackflow,Weekly,2024-W7,10
 stackflow,Weekly,2024-W5,13
 stackflow,Weekly,2024-W4,2
-stackflow,Weekly,2024-W3,3
-stackflow,Weekly,2023-W51,16
+stackflow,Weekly,2024-W3,2
+stackflow,Weekly,2023-W51,15
 stackflow,Weekly,2023-W48,1
-stackflow,Author,github-actions[bot],159
-seed-design,Total,All time,329
+stackflow,Author,github-actions[bot],157
+seed-design,Total,All time,327
 seed-design,Yearly,2021,4
 seed-design,Yearly,2022,19
-seed-design,Yearly,2023,30
+seed-design,Yearly,2023,28
 seed-design,Yearly,2024,1
 seed-design,Yearly,2025,275
 seed-design,Monthly,2025-06,10
@@ -63,7 +63,7 @@ seed-design,Monthly,2024-01,1
 seed-design,Monthly,2023-07,3
 seed-design,Monthly,2023-05,1
 seed-design,Monthly,2023-04,4
-seed-design,Monthly,2023-03,4
+seed-design,Monthly,2023-03,2
 seed-design,Monthly,2023-02,16
 seed-design,Monthly,2023-01,2
 seed-design,Monthly,2022-12,5
@@ -93,7 +93,7 @@ seed-design,Weekly,2023-W21,1
 seed-design,Weekly,2023-W17,1
 seed-design,Weekly,2023-W16,2
 seed-design,Weekly,2023-W15,1
-seed-design,Weekly,2023-W10,4
+seed-design,Weekly,2023-W10,2
 seed-design,Weekly,2023-W8,5
 seed-design,Weekly,2023-W7,5
 seed-design,Weekly,2023-W6,6
@@ -105,4 +105,4 @@ seed-design,Weekly,2022-W47,2
 seed-design,Weekly,2022-W41,1
 seed-design,Weekly,2022-W11,1
 seed-design,Weekly,2021-W42,4
-seed-design,Author,github-actions[bot],329
+seed-design,Author,github-actions[bot],327
