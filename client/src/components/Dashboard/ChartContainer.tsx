@@ -6,12 +6,14 @@ import {
   prepareTimelineData,
   prepareCalendarData,
   prepareWeekdayData,
-  prepareTimeDistributionData
+  prepareTimeDistributionData,
+  prepareContributorData
 } from '../../utils/data'
 import { TimelineChart } from '../Charts/TimelineChart'
 import { CalendarChart } from '../Charts/CalendarChart'
 import { WeekdayBarChart } from '../Charts/WeekdayBarChart'
 import { TimeRadarChart } from '../Charts/TimeRadarChart'
+import { ContributorDonutChart } from '../Charts/ContributorDonutChart'
 
 interface ChartContainerProps {
   chart: DashboardChart
@@ -69,6 +71,13 @@ export function ChartContainer({ chart }: ChartContainerProps) {
         return (
           <div className="w-full h-[400px]">
             <TimeRadarChart data={timeDistData} />
+          </div>
+        )
+      case 'donut':
+        const contributorData = prepareContributorData(data)
+        return (
+          <div className="w-full h-[400px]">
+            <ContributorDonutChart data={contributorData} />
           </div>
         )
       default:

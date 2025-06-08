@@ -176,3 +176,42 @@ export function prepareTimeDistributionData(releases: RawRelease[]) {
     count: hourCounts[hour] || 0
   }))
 }
+
+// 기여자별 릴리스 수 데이터 변환
+export function prepareContributorData(releases: RawRelease[]) {
+  // 기여자별 릴리스 수 집계
+  const contributorCounts = releases.reduce(
+    (acc, release) => {
+      const author = release['Author Username']
+      acc[author] = (acc[author] || 0) + 1
+      return acc
+    },
+    {} as Record<string, number>
+  )
+
+  // 도넛 차트 데이터 형식으로 변환
+  const data = Object.entries(contributorCounts)
+    .map(([name, value]) => ({
+      name,
+      value
+    }))
+    // 릴리스 수 기준으로 내림차순 정렬
+    .sort((a, b) => b.value - a.value)
+
+  // 상위 5명만 표시하고 나머지는 'Others'로 묶기
+  if (data.length > 5) {
+    const topContributors = data.slice(0, 5)
+    const othersCount = data.slice(5).reduce((sum, item) => sum + item.value, 0)
+
+    if (othersCount > 0) {
+      topContributors.push({
+        name: 'Others',
+        value: othersCount
+      })
+    }
+
+    return topContributors
+  }
+
+  return data
+}
