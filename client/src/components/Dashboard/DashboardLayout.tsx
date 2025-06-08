@@ -92,12 +92,20 @@ export function DashboardLayout() {
                     >
                       <h2 className="text-xl font-semibold text-gray-900 mb-4">{category.name}</h2>
                       <p className="text-gray-500 mb-6">{category.description}</p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="flex flex-wrap justify-center gap-6">
                         {category.id === 'overview'
-                          ? charts.map(chart => <ChartContainer key={chart.id} chart={chart} />)
+                          ? charts.map(chart => (
+                              <div key={chart.id} className="w-[40%]">
+                                <ChartContainer chart={chart} />
+                              </div>
+                            ))
                           : charts
                               .filter(chart => chart.category === category.id)
-                              .map(chart => <ChartContainer key={chart.id} chart={chart} />)}
+                              .map(chart => (
+                                <div key={chart.id} className="w-[40%]">
+                                  <ChartContainer chart={chart} />
+                                </div>
+                              ))}
                       </div>
                     </Tab.Panel>
                   ))}

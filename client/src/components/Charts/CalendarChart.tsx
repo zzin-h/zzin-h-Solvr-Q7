@@ -1,5 +1,5 @@
 import { ResponsiveCalendar } from '@nivo/calendar'
-import { format, subMonths } from 'date-fns'
+import { format, parseISO, min, max } from 'date-fns'
 
 interface CalendarChartProps {
   data: {
@@ -9,11 +9,19 @@ interface CalendarChartProps {
 }
 
 export function CalendarChart({ data }: CalendarChartProps) {
-  const to = format(new Date(), 'yyyy-MM-dd')
-  const from = format(subMonths(new Date(), 12), 'yyyy-MM-dd')
+  // 데이터에서 가장 이른 날짜와 가장 늦은 날짜를 찾습니다
+  const dates = data.map(d => parseISO(d.day))
+  const minDate = min(dates)
+  const maxDate = max(dates)
+
+  // 날짜 범위를 YYYY-MM-DD 형식으로 변환
+  const from = format(minDate, 'yyyy-MM-dd')
+  const to = format(maxDate, 'yyyy-MM-dd')
+
+  console.log('Calendar range:', { from, to, dataPoints: data.length })
 
   return (
-    <div style={{ height: '100%', minHeight: '300px' }}>
+    <div style={{ height: '100%', minHeight: '300px', width: '100%' }}>
       <ResponsiveCalendar
         data={data}
         from={from}

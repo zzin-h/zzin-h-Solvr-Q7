@@ -1,4 +1,4 @@
-import { parse } from 'date-fns'
+import { parse, parseISO, format } from 'date-fns'
 
 export interface RawRelease {
   Repository: string
@@ -21,19 +21,11 @@ export interface RawRelease {
 
 export async function fetchReleaseData(): Promise<RawRelease[]> {
   try {
-    // 디버깅을 위한 fetch 호출
-    fetch('/release-raw-data.csv')
-      .then(res => res.text())
-      .then(text => {
-        console.log('CSV 파일 내용:', text) // 전체 내용 확인
-        console.log('첫 5줄:', text.split('\n').slice(0, 5)) // 첫 5줄만 확인
-      })
-
     const response = await fetch('/release-raw-data.csv')
     const csvText = await response.text()
 
-    console.log('CSV 응답 상태:', response.status, response.statusText)
-    console.log('CSV 헤더:', response.headers.get('content-type'))
+    // console.log('CSV 응답 상태:', response.status, response.statusText)
+    // console.log('CSV 헤더:', response.headers.get('content-type'))
 
     // 빈 행 제거
     const lines = csvText
@@ -41,8 +33,8 @@ export async function fetchReleaseData(): Promise<RawRelease[]> {
       .map(line => line.trim())
       .filter(line => line.length > 0)
 
-    console.log('처리된 라인 수:', lines.length)
-    console.log('첫 번째 라인(헤더):', lines[0])
+    // console.log('처리된 라인 수:', lines.length)
+    // console.log('첫 번째 라인(헤더):', lines[0])
     if (lines.length > 1) {
       console.log('두 번째 라인(첫 데이터):', lines[1])
     }
@@ -94,52 +86,6 @@ export async function fetchReleaseData(): Promise<RawRelease[]> {
   }
 }
 
-// export async function fetchReleaseData(): Promise<RawRelease[]> {
-//   try {
-//     const response = await fetch('/server/release-raw-data.csv')
-//     const csvText = await response.text()
-
-//     // CSV 파싱 (헤더 행을 기준으로)
-//     const lines = csvText.split('\n')
-//     const headers = lines[0].split(',')
-
-//     return lines
-//       .slice(1)
-//       .map(line => {
-//         const values = line.split(',')
-//         const record: any = {}
-
-//         headers.forEach((header, index) => {
-//           const value = values[index]?.trim()
-//           if (value === undefined || value === '') return
-
-//           // 타입 변환
-//           if (header === 'Release ID') {
-//             record[header] = parseInt(value)
-//           } else if (
-//             header === 'Is Draft' ||
-//             header === 'Is Prerelease' ||
-//             header === 'Is Weekday'
-//           ) {
-//             record[header] = value.toLowerCase() === 'true'
-//           } else if (header === 'Day of Week') {
-//             record[header] = parseInt(value)
-//           } else if (header === 'Release Name' || header === 'Description') {
-//             record[header] = value === 'null' ? null : value
-//           } else {
-//             record[header] = value
-//           }
-//         })
-
-//         return record as RawRelease
-//       })
-//       .filter(Boolean)
-//   } catch (error) {
-//     console.error('Error fetching release data:', error)
-//     return []
-//   }
-// }
-
 // 시계열 차트용 데이터 변환
 export function prepareTimelineData(releases: RawRelease[]) {
   const monthlyData = releases.reduce(
@@ -161,10 +107,34 @@ export function prepareTimelineData(releases: RawRelease[]) {
 
 // 히트맵 캘린더용 데이터 변환
 export function prepareCalendarData(releases: RawRelease[]) {
-  return releases.map(release => ({
-    day: release['Published At'],
-    value: 1
+  // 날짜별 릴리스 카운트를 저장할 객체
+  const dateCount: Record<string, number> = {}
+
+  // 각 릴리스의 날짜를 YYYY-MM-DD 형식으로 변환하고 카운트
+  releases.forEach(release => {
+    const published = release['Published At']
+    if (!published) return
+
+    // ISO 날짜 문자열을 파싱하고 YYYY-MM-DD 형식으로 변환
+    try {
+      const day = format(parseISO(published), 'yyyy-MM-dd')
+      dateCount[day] = (dateCount[day] || 0) + 1
+      //   console.log(dateCount)
+    } catch (error) {
+      console.error('날짜 변환 오류:', { published, error })
+    }
+  })
+
+  // nivo-calendar가 기대하는 형식으로 변환
+  const calendarData = Object.entries(dateCount).map(([day, value]) => ({
+    day,
+    value
   }))
+
+  // 디버깅을 위한 로그
+  console.log('Calendar 데이터:', calendarData)
+
+  return calendarData
 }
 
 // 요일별 분포 데이터 변환

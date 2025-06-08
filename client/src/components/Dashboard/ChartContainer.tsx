@@ -40,9 +40,21 @@ export function ChartContainer({ chart }: ChartContainerProps) {
 
     switch (chart.type) {
       case 'timeline':
-        return <TimelineChart data={prepareTimelineData(data)} />
+        const timelineData = prepareTimelineData(data)
+
+        return (
+          <div className="w-full h-[400px]">
+            <TimelineChart data={timelineData} />
+          </div>
+        )
       case 'heatmap':
-        return <CalendarChart data={prepareCalendarData(data)} />
+        const calendarData = prepareCalendarData(data)
+        // console.log('Prepared calendar data:', calendarData)
+        return (
+          <div className="w-full h-[400px]">
+            <CalendarChart data={calendarData} />
+          </div>
+        )
       default:
         return <div className="text-gray-400">Chart type not implemented: {chart.type}</div>
     }
@@ -50,11 +62,9 @@ export function ChartContainer({ chart }: ChartContainerProps) {
 
   return (
     <div
-      className="bg-white rounded-lg shadow p-4 min-h-[300px] flex flex-col"
-      style={{
-        minWidth: chart.minWidth,
-        minHeight: chart.minHeight
-      }}
+      className={`bg-white rounded-lg shadow p-4 flex flex-col w-full ${
+        chart.type === 'heatmap' ? 'min-h-[500px]' : 'min-h-[300px]'
+      }`}
     >
       <div className="flex justify-between items-start mb-4">
         <div>
