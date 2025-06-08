@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { DashboardLayout } from '../components/Dashboard/DashboardLayout'
 
 const HomePage = () => {
   return (
@@ -42,6 +43,7 @@ const HomePage = () => {
           </p>
         </div>
       </div>
+      <DashboardLayout />
     </div>
   )
 }
