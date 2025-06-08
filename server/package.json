@@ -1,37 +1,24 @@
 {
-  "name": "server",
+  "name": "release-tracker-server",
   "version": "1.0.0",
-  "private": true,
+  "description": "Release Tracker Dashboard Server",
+  "main": "dist/app.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "start": "node dist/app.js",
+    "dev": "ts-node-dev --respawn src/app.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "collect-stats": "tsx src/scripts/collectReleaseStats.ts"
+    "test": "jest"
   },
   "dependencies": {
-    "@fastify/cors": "^11.0.1",
-    "@fastify/static": "^8.2.0",
-    "@octokit/rest": "^20.0.2",
-    "better-sqlite3": "^11.9.1",
-    "csv-writer": "^1.6.0",
-    "dayjs": "^1.11.10",
-    "dotenv-safe": "^9.1.0",
-    "drizzle-orm": "^0.42.0",
-    "fastify": "^5.3.2",
-    "zod": "^3.22.4"
+    "cors": "^2.8.5",
+    "date-fns": "^2.30.0",
+    "express": "^4.18.2"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.13",
-    "@types/dotenv-safe": "^8.1.6",
-    "@types/node": "^22.14.1",
-    "pino-pretty": "^13.0.0",
-    "tsx": "^4.19.3",
-    "typescript": "^5.8.3",
-    "vitest": "^3.1.2"
-  },
-  "engines": {
-    "node": ">=22.0.0"
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.2.5",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.1.3"
   }
 }

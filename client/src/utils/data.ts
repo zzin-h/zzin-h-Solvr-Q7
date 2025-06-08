@@ -1,4 +1,5 @@
 import { parse, parseISO, format } from 'date-fns'
+import { DashboardData } from '../types/dashboard'
 
 export interface RawRelease {
   Repository: string
@@ -17,6 +18,57 @@ export interface RawRelease {
   Month: string
   Week: string
   'Day of Week': number
+}
+
+const API_BASE_URL = 'http://localhost:3001/api'
+
+export async function fetchDashboardData(): Promise<DashboardData> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/dashboard`)
+    if (!response.ok) {
+      throw new Error('Failed to fetch dashboard data')
+    }
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error)
+    throw error
+  }
+}
+
+// 개별 차트 데이터 가져오기 함수들
+export async function fetchTimelineData() {
+  const response = await fetch(`${API_BASE_URL}/timeline`)
+  return await response.json()
+}
+
+export async function fetchCalendarData() {
+  const response = await fetch(`${API_BASE_URL}/calendar`)
+  return await response.json()
+}
+
+export async function fetchWeekdayData() {
+  const response = await fetch(`${API_BASE_URL}/weekday`)
+  return await response.json()
+}
+
+export async function fetchTimeDistributionData() {
+  const response = await fetch(`${API_BASE_URL}/time-distribution`)
+  return await response.json()
+}
+
+export async function fetchContributorData() {
+  const response = await fetch(`${API_BASE_URL}/contributors`)
+  return await response.json()
+}
+
+export async function fetchReleaseTypeData() {
+  const response = await fetch(`${API_BASE_URL}/release-types`)
+  return await response.json()
+}
+
+export async function fetchWordCloudData() {
+  const response = await fetch(`${API_BASE_URL}/word-cloud`)
+  return await response.json()
 }
 
 export async function fetchReleaseData(): Promise<RawRelease[]> {

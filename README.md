@@ -162,3 +162,35 @@ interface DashboardChart {
 4. **키워드 트렌드**
    - 주요 변경사항 키워드
    - 이슈/버그픽스 패턴
+
+---
+
+#### 서버 구현
+
+- Express 기반의 REST API 서버 구축
+- 데이터 처리 로직을 서버로 이전
+- 메모리 기반 데이터 관리 구현
+- 각 차트별 전용 API 엔드포인트 제공
+
+#### API 엔드포인트
+
+- `GET /api/dashboard`: 전체 대시보드 데이터
+- `GET /api/timeline`: 시계열 차트 데이터
+- `GET /api/calendar`: 캘린더 히트맵 데이터
+- `GET /api/weekday`: 요일별 분포 데이터
+- `GET /api/time-distribution`: 시간대별 분포 데이터
+- `GET /api/contributors`: 기여자 분석 데이터
+- `GET /api/release-types`: 릴리스 타입 분석 데이터
+- `GET /api/word-cloud`: 릴리스 노트 키워드 분석 데이터
+
+#### 클라이언트 개선
+
+- API 통신 로직 구현
+- 데이터 타입 정의 개선
+- 에러 처리 및 로딩 상태 관리 강화
+
+#### 기술 스택 업데이트
+
+- 서버: Express, date-fns, TypeScript
+- API: REST, JSON
+- 통신: fetch API, CORS 지원
