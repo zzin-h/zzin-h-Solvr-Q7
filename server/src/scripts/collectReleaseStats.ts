@@ -2,9 +2,11 @@ import { Octokit } from '@octokit/rest'
 import { createObjectCsvWriter } from 'csv-writer'
 import dayjs from 'dayjs'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
+import isoWeek from 'dayjs/plugin/isoWeek'
 import { ReleaseSchema, type Release, type ReleaseStats, type StatRecord } from './types'
 
 dayjs.extend(weekOfYear)
+dayjs.extend(isoWeek)
 
 const REPOS = [
   { owner: 'daangn', repo: 'stackflow' },
@@ -14,6 +16,13 @@ const REPOS = [
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN
 })
+
+function isWeekday(date: string | null): boolean {
+  if (!date) return false // null인 경우 제외
+  const day = dayjs(date)
+  const weekday = day.isoWeekday()
+  return weekday >= 1 && weekday <= 5 // 1(월) ~ 5(금)만 true
+}
 
 async function fetchAllReleases(owner: string, repo: string): Promise<Release[]> {
   const releases = []
@@ -30,6 +39,7 @@ async function fetchAllReleases(owner: string, repo: string): Promise<Release[]>
     if (response.data.length === 0) break
 
     const validReleases = response.data
+      .filter(release => isWeekday(release.published_at)) // 주말 릴리스 제외
       .map(release => ({
         ...release,
         repository: repo
