@@ -1,85 +1,164 @@
-# 풀스택 서비스 보일러 플레이트
+# Release Tracker Dashboard
 
-## 프로젝트 개요
+📊 프로젝트 개요
 
-이 보일러 플레이트는 풀스택 웹 애플리케이션 개발을 위한 기본 구조를 제공합니다. monorepo 구조로 클라이언트와 서버를 효율적으로 관리하며, 현대적인 웹 개발 기술 스택을 활용합니다.
+Release Tracker는 Github 릴리즈 데이터를 다양한 관점에서 시각화하여,
+팀의 개발/릴리즈 활동 패턴을 한눈에 볼 수 있는 대시보드 서비스입니다.
 
-## 기술 스택
+- 단순 데이터 수집을 넘어, 의미 있는 인사이트 도출이 목표입니다.
+- 직관적이고 반응형인 대시보드에서 누구나 쉽게 팀의 릴리즈 현황을 파악할 수 있습니다.
 
-### 공통
+---
 
-- 패키지 매니저: pnpm (workspace 기능 활용)
-- 언어: TypeScript
-- Node.js 버전: 22.x
-- 테스트: Vitest
-- 코드 품질: Prettier
+🖼️ 대시보드 구성
 
-### 클라이언트
+### 1. 시계열 기반 차트 (Time Analysis)
 
-- 프레임워크: React
-- 빌드 도구: Vite
-- 라우팅: React Router
-- 스타일링: TailwindCSS
+<img src="./images_for_readme/time.png" width="500px" />
 
-### 서버
+#### 릴리스 트렌드 라인 차트
 
-- 프레임워크: Fastify
-- 데이터베이스: SQLite with DirzzleORM
+- **구현**: `TimelineChart` 컴포넌트
+- **라이브러리**: recharts (`LineChart`)
+- **데이터 처리**: `prepareTimelineData()` - 월별 릴리스 수 집계
+- **시각화 방식**: 월별 릴리스 수 변화를 연속적인 라인으로 표현
+- **👉 인사이트**: 릴리스 주기와 시즌별 패턴 파악
 
-## 설치 및 실행
+#### 히트맵 캘린더
 
-### 초기 설치
+- **구현**: `CalendarChart` 컴포넌트
+- **라이브러리**: @nivo/calendar
+- **데이터 처리**: `prepareCalendarData()` - 일별 릴리스 수를 YYYY-MM-DD 형식으로 변환
+- **시각화 방식**: 일별 릴리스 밀도를 색상 강도로 표현
+- **👉 인사이트**: 릴리스가 집중되는 요일/주차 파악
 
-```bash
-# 프로젝트 루트 디렉토리에서 실행
-pnpm install
+### 2. 분포 차트 (Distribution)
+
+<img src="./images_for_readme/distribution.png" width="500px" />
+
+#### 요일별 릴리스 바 차트
+
+- **구현**: `WeekdayBarChart` 컴포넌트
+- **라이브러리**: recharts (`BarChart`)
+- **데이터 처리**: `prepareWeekdayData()` - 요일별 릴리스 수 집계
+- **시각화 방식**: 7개 요일의 릴리스 건수를 세로 막대로 비교
+- **👉 인사이트**: 선호되는 릴리스 요일 파악
+
+#### 시간대별 방사형 차트
+
+- **구현**: `TimeRadarChart` 컴포넌트
+- **라이브러리**: recharts (`RadarChart`)
+- **데이터 처리**: `prepareTimeDistributionData()` - 24시간 기준 릴리스 시간 분포
+- **시각화 방식**: 24시간을 방사형으로 배치하여 시간대별 분포 표현
+- **👉 인사이트**: 선호 릴리스 시간대 분석
+
+### 3. 기여자 분석 (Contributors)
+
+<img src="./images_for_readme/contributors.png" width="500px" />
+
+#### 기여자별 도넛 차트
+
+- **구현**: `ContributorDonutChart` 컴포넌트
+- **라이브러리**: recharts (`PieChart`)
+- **데이터 처리**: `prepareContributorData()` - 상위 5명 기여자 + Others
+- **시각화 방식**: 기여자별 릴리스 비율을 도넛 형태로 표현
+- **👉 인사이트**: 주요 기여자 및 릴리스 작성 집중도 파악
+
+### 4. 릴리스 유형 분석 (Release Types)
+
+#### 스택 바 차트
+
+- **구현**: `ReleaseTypeBarChart` 컴포넌트
+- **라이브러리**: recharts (`BarChart` with stacked bars)
+- **데이터 처리**: `prepareReleaseTypeData()` - 레포지토리별 릴리스 타입 분류
+- **시각화 방식**: 정식/프리릴리스/드래프트를 누적 막대로 표현
+- **👉 인사이트**: 릴리스 프로세스 성숙도 및 타입 분포 확인
+
+### 5. 릴리스 노트 분석 (Release Notes)
+
+<img src="./images_for_readme/releasetypes.png" width="500px" />
+
+#### 워드 클라우드
+
+- **구현**: `WordCloudChart` 컴포넌트
+- **데이터 처리**: `prepareWordCloudData()` - 불용어 제거 및 빈도수 기반 상위 50개 단어
+- **시각화 방식**:
+  - 단어 크기: 빈도수에 따라 12px ~ 48px
+  - 색상: HSL 색상환 기반 다양한 색상 자동 생성
+  - 투명도: 빈도수에 따라 30% ~ 100%
+- **👉 인사이트**: 주요 변경점 및 이슈 트렌드 파악
+
+---
+
+🧩 기술 스택 및 패키지
+
+#### 차트 라이브러리
+
+- **recharts**: 기본 차트 구현 (라인, 바, 도넛, 레이더)
+- **@nivo/calendar**: 캘린더 히트맵 구현
+
+#### 데이터 처리
+
+- **date-fns**: 날짜 파싱 및 포맷팅
+- **CSV 파싱**: 자체 구현 파서 사용
+
+#### UI/스타일링
+
+- **Tailwind CSS**: 반응형 레이아웃 및 스타일링
+- **Flex & Grid**: 차트 레이아웃 구성
+
+---
+
+🏷️ 주요 타입 정의
+
+```typescript
+type ChartType = 'timeline' | 'heatmap' | 'bar' | 'radar' | 'donut' | 'stackedBar' | 'wordcloud'
+
+type CategoryId = 'overview' | 'time' | 'distribution' | 'contributors' | 'types'
+
+interface DashboardChart {
+  id: string
+  title: string
+  description: string
+  type: ChartType
+  category: CategoryId
+  dimensions: {
+    width: number
+    height: number
+  }
+}
 ```
 
-### 개발 서버 실행
+---
 
-```bash
-# 클라이언트 및 서버 동시 실행
-pnpm dev
+📐 레이아웃 구성
 
-# 클라이언트만 실행
-pnpm dev:client
+- **차트 컨테이너**: 400px 고정 높이
+- **반응형 설계**:
+  - `w-full` 클래스로 컨테이너 너비에 맞춤
+  - Flex와 Grid 조합으로 유동적 배치
+- **일관된 마진**: `margin: { top: 20, right: 30, left: 20, bottom: 5 }`
+- **여백과 간격**: gap-4, p-4 등 일관된 spacing
 
-# 서버만 실행
-pnpm dev:server
-```
+---
 
-### 테스트 실행
+💡 주요 인사이트 도출 포인트
 
-```bash
-# 클라이언트 테스트
-pnpm test:client
+1. **시간적 패턴**
 
-# 서버 테스트
-pnpm test:server
+   - 월별/요일별 릴리스 트렌드
+   - 선호되는 릴리스 시간대
 
-# 모든 테스트 실행
-pnpm test
-```
+2. **기여도 분석**
 
-### 빌드
+   - 핵심 기여자 식별
+   - 릴리스 작성 분산도
 
-```bash
-# 클라이언트 및 서버 빌드
-pnpm build
-```
+3. **릴리스 프로세스**
 
-## 환경 변수 설정
+   - 정식/프리릴리스/드래프트 비율
+   - 레포지토리별 릴리스 성숙도
 
-- 클라이언트: `client/.env` 파일에 설정 (예시는 `client/.env.example` 참조)
-- 서버: `server/.env` 파일에 설정 (예시는 `server/.env.example` 참조)
-
-## API 엔드포인트
-
-서버는 다음과 같은 기본 API 엔드포인트를 제공합니다:
-
-- `GET /api/health`: 서버 상태 확인
-- `GET /api/users`: 유저 목록 조회
-- `GET /api/users/:id`: 특정 유저 조회
-- `POST /api/users`: 새 유저 추가
-- `PUT /api/users/:id`: 유저 정보 수정
-- `DELETE /api/users/:id`: 유저 삭제
+4. **키워드 트렌드**
+   - 주요 변경사항 키워드
+   - 이슈/버그픽스 패턴
