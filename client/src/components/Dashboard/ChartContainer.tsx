@@ -4,10 +4,14 @@ import {
   RawRelease,
   fetchReleaseData,
   prepareTimelineData,
-  prepareCalendarData
+  prepareCalendarData,
+  prepareWeekdayData,
+  prepareTimeDistributionData
 } from '../../utils/data'
 import { TimelineChart } from '../Charts/TimelineChart'
 import { CalendarChart } from '../Charts/CalendarChart'
+import { WeekdayBarChart } from '../Charts/WeekdayBarChart'
+import { TimeRadarChart } from '../Charts/TimeRadarChart'
 
 interface ChartContainerProps {
   chart: DashboardChart
@@ -41,7 +45,6 @@ export function ChartContainer({ chart }: ChartContainerProps) {
     switch (chart.type) {
       case 'timeline':
         const timelineData = prepareTimelineData(data)
-
         return (
           <div className="w-full h-[400px]">
             <TimelineChart data={timelineData} />
@@ -49,10 +52,23 @@ export function ChartContainer({ chart }: ChartContainerProps) {
         )
       case 'heatmap':
         const calendarData = prepareCalendarData(data)
-        // console.log('Prepared calendar data:', calendarData)
         return (
           <div className="w-full h-[400px]">
             <CalendarChart data={calendarData} />
+          </div>
+        )
+      case 'bar':
+        const weekdayData = prepareWeekdayData(data)
+        return (
+          <div className="w-full h-[400px]">
+            <WeekdayBarChart data={weekdayData} />
+          </div>
+        )
+      case 'radar':
+        const timeDistData = prepareTimeDistributionData(data)
+        return (
+          <div className="w-full h-[400px]">
+            <TimeRadarChart data={timeDistData} />
           </div>
         )
       default:
