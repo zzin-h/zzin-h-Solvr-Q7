@@ -7,13 +7,17 @@ import {
   prepareCalendarData,
   prepareWeekdayData,
   prepareTimeDistributionData,
-  prepareContributorData
+  prepareContributorData,
+  prepareReleaseTypeData,
+  prepareWordCloudData
 } from '../../utils/data'
 import { TimelineChart } from '../Charts/TimelineChart'
 import { CalendarChart } from '../Charts/CalendarChart'
 import { WeekdayBarChart } from '../Charts/WeekdayBarChart'
 import { TimeRadarChart } from '../Charts/TimeRadarChart'
 import { ContributorDonutChart } from '../Charts/ContributorDonutChart'
+import { ReleaseTypeBarChart } from '../Charts/ReleaseTypeBarChart'
+import { WordCloudChart } from '../Charts/WordCloudChart'
 
 interface ChartContainerProps {
   chart: DashboardChart
@@ -78,6 +82,20 @@ export function ChartContainer({ chart }: ChartContainerProps) {
         return (
           <div className="w-full h-[400px]">
             <ContributorDonutChart data={contributorData} />
+          </div>
+        )
+      case 'stackedBar':
+        const releaseTypeData = prepareReleaseTypeData(data)
+        return (
+          <div className="w-full h-[400px]">
+            <ReleaseTypeBarChart data={releaseTypeData} />
+          </div>
+        )
+      case 'wordcloud':
+        const wordCloudData = prepareWordCloudData(data)
+        return (
+          <div className="w-full h-[400px]">
+            <WordCloudChart data={wordCloudData} />
           </div>
         )
       default:

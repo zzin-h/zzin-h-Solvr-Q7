@@ -215,3 +215,157 @@ export function prepareContributorData(releases: RawRelease[]) {
 
   return data
 }
+
+// 릴리스 타입별 데이터 변환
+export function prepareReleaseTypeData(releases: RawRelease[]) {
+  // 레포지토리별로 릴리스 타입 카운트
+  const typesByRepo = releases.reduce(
+    (acc, release) => {
+      const repo = release.Repository
+      if (!acc[repo]) {
+        acc[repo] = {
+          repository: repo,
+          regular: 0,
+          prerelease: 0,
+          draft: 0
+        }
+      }
+
+      if (release['Is Draft']) {
+        acc[repo].draft += 1
+      } else if (release['Is Prerelease']) {
+        acc[repo].prerelease += 1
+      } else {
+        acc[repo].regular += 1
+      }
+
+      return acc
+    },
+    {} as Record<
+      string,
+      {
+        repository: string
+        regular: number
+        prerelease: number
+        draft: number
+      }
+    >
+  )
+
+  return Object.values(typesByRepo)
+}
+
+// 릴리스 노트 용어 분석 데이터 변환
+export function prepareWordCloudData(releases: RawRelease[]) {
+  // 불용어 목록 (필요에 따라 추가)
+  const stopWords = new Set([
+    'the',
+    'be',
+    'to',
+    'of',
+    'and',
+    'a',
+    'in',
+    'that',
+    'have',
+    'i',
+    'it',
+    'for',
+    'not',
+    'on',
+    'with',
+    'he',
+    'as',
+    'you',
+    'do',
+    'at',
+    'this',
+    'but',
+    'his',
+    'by',
+    'from',
+    'they',
+    'we',
+    'say',
+    'her',
+    'she',
+    'or',
+    'an',
+    'will',
+    'my',
+    'one',
+    'all',
+    'would',
+    'there',
+    'their',
+    'what',
+    'so',
+    'up',
+    'out',
+    'if',
+    'about',
+    'who',
+    'get',
+    'which',
+    'go',
+    'me',
+    // 기술 문서에서 자주 나오는 일반적인 단어들
+    'fix',
+    'fixed',
+    'bug',
+    'issue',
+    'update',
+    'updated',
+    'change',
+    'changed',
+    'add',
+    'added',
+    'remove',
+    'removed',
+    'improve',
+    'improved',
+    'enhancement',
+    'feature',
+    'version',
+    'release',
+    'changelog',
+    'readme',
+    'documentation',
+    'implement',
+    'implemented',
+    'support',
+    'supported'
+  ])
+
+  // 모든 릴리스 노트 텍스트 결합
+  const allText = releases
+    .map(release => release.Description || '')
+    .join(' ')
+    .toLowerCase()
+
+  // 특수문자 제거 및 단어 분리
+  const words = allText
+    .replace(/[^a-zA-Z\s]/g, ' ')
+    .split(/\s+/)
+    .filter(
+      word =>
+        word.length > 2 && // 3글자 이상
+        !stopWords.has(word) && // 불용어 제외
+        !/^\d+$/.test(word) // 숫자만으로 이루어진 단어 제외
+    )
+
+  // 단어 빈도수 계산
+  const wordFreq = words.reduce(
+    (acc, word) => {
+      acc[word] = (acc[word] || 0) + 1
+      return acc
+    },
+    {} as Record<string, number>
+  )
+
+  // 상위 50개 단어 선택
+  return Object.entries(wordFreq)
+    .map(([text, value]) => ({ text, value }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 50)
+}
