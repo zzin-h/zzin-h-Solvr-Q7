@@ -3,7 +3,13 @@ import { createObjectCsvWriter } from 'csv-writer'
 import dayjs from 'dayjs'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import isoWeek from 'dayjs/plugin/isoWeek'
-import { ReleaseSchema, type Release, type ReleaseStats, type StatRecord } from './types'
+import {
+  ReleaseSchema,
+  type Release,
+  type ReleaseStats,
+  type StatRecord,
+  type RawReleaseRecord
+} from './types'
 
 dayjs.extend(weekOfYear)
 dayjs.extend(isoWeek)
@@ -145,6 +151,54 @@ async function writeStatsToCsv(allStats: ReleaseStats[]) {
   await csvWriter.writeRecords(records)
 }
 
+async function writeRawDataToCsv(releases: Release[]) {
+  const csvWriter = createObjectCsvWriter({
+    path: 'release-raw-data.csv',
+    header: [
+      { id: 'repository', title: 'Repository' },
+      { id: 'releaseId', title: 'Release ID' },
+      { id: 'tagName', title: 'Tag Name' },
+      { id: 'releaseName', title: 'Release Name' },
+      { id: 'publishedAt', title: 'Published At' },
+      { id: 'createdAt', title: 'Created At' },
+      { id: 'authorUsername', title: 'Author Username' },
+      { id: 'isDraft', title: 'Is Draft' },
+      { id: 'isPrerelease', title: 'Is Prerelease' },
+      { id: 'description', title: 'Description' },
+      { id: 'releaseUrl', title: 'Release URL' },
+      { id: 'isWeekday', title: 'Is Weekday' },
+      { id: 'year', title: 'Year' },
+      { id: 'month', title: 'Month' },
+      { id: 'week', title: 'Week' },
+      { id: 'dayOfWeek', title: 'Day of Week' }
+    ]
+  })
+
+  const records: RawReleaseRecord[] = releases.map(release => {
+    const date = dayjs(release.published_at)
+    return {
+      repository: release.repository,
+      releaseId: release.id,
+      tagName: release.tag_name,
+      releaseName: release.name,
+      publishedAt: release.published_at,
+      createdAt: release.created_at,
+      authorUsername: release.author.login,
+      isDraft: release.draft,
+      isPrerelease: release.prerelease,
+      description: release.body,
+      releaseUrl: release.html_url,
+      isWeekday: isWeekday(release.published_at),
+      year: date.format('YYYY'),
+      month: date.format('YYYY-MM'),
+      week: `${date.format('YYYY')}-W${date.week()}`,
+      dayOfWeek: date.isoWeekday()
+    }
+  })
+
+  await csvWriter.writeRecords(records)
+}
+
 async function main() {
   try {
     if (!process.env.GITHUB_TOKEN) {
@@ -152,16 +206,20 @@ async function main() {
     }
 
     const allStats: ReleaseStats[] = []
+    const allReleases: Release[] = []
 
     for (const { owner, repo } of REPOS) {
       console.log(`Fetching releases for ${owner}/${repo}...`)
       const releases = await fetchAllReleases(owner, repo)
+      allReleases.push(...releases)
       const stats = calculateStats(releases)
       allStats.push(stats)
     }
 
     await writeStatsToCsv(allStats)
+    await writeRawDataToCsv(allReleases)
     console.log('Release statistics have been written to release-stats.csv')
+    console.log('Raw release data have been written to release-raw-data.csv')
   } catch (error) {
     console.error('Error:', error)
     process.exit(1)
