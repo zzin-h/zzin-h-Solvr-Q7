@@ -66,6 +66,8 @@ Release Tracker는 Github 릴리즈 데이터를 다양한 관점에서 시각�
 
 ### 4. 릴리스 유형 분석 (Release Types)
 
+<img src="./images_for_readme/releasetypes.png" width="500px" />
+
 #### 스택 바 차트
 
 - **구현**: `ReleaseTypeBarChart` 컴포넌트
@@ -75,8 +77,6 @@ Release Tracker는 Github 릴리즈 데이터를 다양한 관점에서 시각�
 - **👉 인사이트**: 릴리스 프로세스 성숙도 및 타입 분포 확인
 
 ### 5. 릴리스 노트 분석 (Release Notes)
-
-<img src="./images_for_readme/releasetypes.png" width="500px" />
 
 #### 워드 클라우드
 
